@@ -7,6 +7,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
 
 const sourceSans3Heading = Source_Sans_3({
   subsets: ["latin"],
@@ -47,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         sourceSans3Heading.variable,
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Toaster position="top-right" richColors />
+      </body>
     </html>
   );
 }

@@ -54,7 +54,7 @@ const RegisterForm = () => {
         </div>
 
         <form action={action} className="space-y-4">
-          {/* Avatar (optional) */}
+          {/* Avatar (required) */}
           <div className="flex flex-col items-center gap-1.5">
             <label
               htmlFor="avatar"
@@ -77,13 +77,17 @@ const RegisterForm = () => {
                 name="avatar"
                 type="file"
                 accept="image/*"
+                required
                 onChange={handleAvatarChange}
                 className="absolute h-px w-px overflow-hidden opacity-0"
               />
             </label>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Profile photo (optional)
+              Profile photo (required)
             </p>
+            {fieldErrors?.avatar && (
+              <p className="text-xs text-destructive">{fieldErrors.avatar}</p>
+            )}
           </div>
 
           {/* Role */}

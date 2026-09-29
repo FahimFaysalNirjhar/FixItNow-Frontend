@@ -61,6 +61,12 @@ export const loginAction = async (
       headers: { "content-type": "application/json" },
       body: JSON.stringify(payload),
     });
+
+    console.log(
+      "LOGIN RESPONSE →",
+      res.status,
+      JSON.stringify(result, null, 2),
+    );
     result = await res.json();
   } catch {
     return {
@@ -152,6 +158,14 @@ export const registerAction = async (
 
   const errors: Record<string, string> = {};
 
+  if (!avatar || avatar.size === 0) {
+    errors.avatar = "Please select a profile picture";
+  } else if (!avatar.type.startsWith("image/")) {
+    errors.avatar = "Profile picture must be an image";
+  } else if (avatar.size > 5 * 1024 * 1024) {
+    errors.avatar = "Image must be smaller than 5 MB";
+  }
+
   if (!name || name.trim().length < 2) {
     errors.name = "Name must be at least 2 characters";
   }
@@ -184,7 +198,17 @@ export const registerAction = async (
     };
   }
 
-  const photoURL = avatar ? await uploadImgbb(avatar) : null;
+  // Photo is required, so stop here if the upload fails
+  const photoURL = await uploadImgbb(avatar as File);
+
+  if (!photoURL) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Could not upload your profile photo. Please try again.",
+    };
+  }
+
   const payload = {
     name,
     email,
@@ -192,7 +216,7 @@ export const registerAction = async (
     role,
     phone: phone.replace(/[\s-]/g, ""),
     address,
-    ...(photoURL && { profilePhoto: photoURL }),
+    profilePhoto: photoURL,
   };
 
   try {
@@ -204,7 +228,16 @@ export const registerAction = async (
         body: JSON.stringify(payload),
       },
     );
-    return await res.json();
+    const result = await res.json();
+
+    if (!result.success) {
+      console.error(
+        "Register failed:",
+        res.status,
+        JSON.stringify(result, null, 2),
+      );
+    }
+    return result;
   } catch {
     return {
       success: false,
