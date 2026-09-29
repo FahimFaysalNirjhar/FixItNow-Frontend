@@ -143,12 +143,29 @@ async function uploadImgbb(file: File): Promise<string | null> {
   }
 }
 
+// Returns true/false, or null if the check itself failed
+async function isPhoneTaken(phone: string): Promise<boolean | null> {
+  const url = `${process.env.BACKEND_API_URL}/api/users/check-phone?phone=${encodeURIComponent(phone)}`;
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    const text = await res.text();
+    console.log("CHECK PHONE →", url, res.status, text);
+
+    const result = JSON.parse(text);
+    if (!res.ok || !result.success) return null;
+    return Boolean(result.data?.exists);
+  } catch (err) {
+    console.error("CHECK PHONE ERROR →", err);
+    return null;
+  }
+}
+
 export const registerAction = async (
   prevState: RegisterState,
   formdata: FormData,
 ) => {
   const name = formdata.get("name") as string;
-  const email = formdata.get("email") as string;
+  const email = (formdata.get("email") as string)?.trim();
   const password = formdata.get("password") as string;
   const confirmPassword = formdata.get("confirmPassword") as string;
   const avatar = formdata.get("avatar") as File | null;
@@ -198,6 +215,28 @@ export const registerAction = async (
     };
   }
 
+  if (Object.keys(errors).length > 0) {
+    return {
+      success: false,
+      statusCode: 400,
+      message: "Please fix the errors below",
+      errors,
+    };
+  }
+
+  const normalizedPhone = phone.replace(/[\s-]/g, "");
+
+  // Check the phone before uploading the photo
+  const phoneTaken = await isPhoneTaken(normalizedPhone);
+  if (phoneTaken === true) {
+    return {
+      success: false,
+      statusCode: 409,
+      message: "This phone number is already registered",
+      errors: { phone: "This phone number is already registered" },
+    };
+  }
+
   // Photo is required, so stop here if the upload fails
   const photoURL = await uploadImgbb(avatar as File);
 
@@ -209,12 +248,13 @@ export const registerAction = async (
     };
   }
 
+  // Spaces and dashes removed so the same number is always stored one way
   const payload = {
     name,
     email,
     password,
     role,
-    phone: phone.replace(/[\s-]/g, ""),
+    phone: normalizedPhone,
     address,
     profilePhoto: photoURL,
   };
@@ -236,7 +276,31 @@ export const registerAction = async (
         res.status,
         JSON.stringify(result, null, 2),
       );
+
+      const message = String(result.message ?? "").toLowerCase();
+
+      // Show duplicate errors under the matching input
+      if (message.includes("phone")) {
+        return {
+          success: false,
+          statusCode: 409,
+          message: "This phone number is already registered",
+          errors: { phone: "This phone number is already registered" },
+        };
+      }
+
+      if (message.includes("email")) {
+        return {
+          success: false,
+          statusCode: 409,
+          message: "This email is already registered",
+          errors: { email: "This email is already registered" },
+        };
+      }
+
+      delete result.error; // don't send server stack traces to the browser
     }
+
     return result;
   } catch {
     return {
