@@ -1,8 +1,8 @@
 import {
+  Technician,
   TECHNICIAN_PAGE_SIZE,
   TECHNICIAN_SORT_OPTIONS,
-  type Technician,
-  type TechnicianMeta,
+  TechnicianMeta,
 } from "./technician.types";
 
 export type TechnicianFilters = {
@@ -52,7 +52,6 @@ export const getTechnicians = async (
       };
     }
 
-    // Works with both { data: [...], meta } and { data: { data: [...], meta } }
     const payload = result.data;
     const data: Technician[] = Array.isArray(payload)
       ? payload

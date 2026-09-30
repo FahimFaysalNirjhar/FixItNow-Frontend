@@ -74,3 +74,24 @@ export const RATING_OPTIONS = [
 ];
 
 export const TECHNICIAN_PAGE_SIZE = 9;
+
+export type Review = {
+  id: string;
+  rating: number;
+  comment?: string | null;
+  createdAt: string;
+  customer?: { name?: string; profilePhoto?: string | null } | null;
+};
+
+export type TechnicianDetail = Omit<Technician, "services"> & {
+  services?: {
+    id: string;
+    title: string;
+    description?: string | null;
+    price: number;
+    location?: string | null;
+    category?: { name: string } | null;
+  }[];
+  availability?: AvailabilitySlot[];
+  reviews?: Review[];
+};
