@@ -11,9 +11,9 @@ export type Me = {
   profilePhoto?: string | null;
   phone?: string | null;
   address?: string | null;
+  createdAt?: string;
   technicianProfile?: Record<string, unknown> | null;
 };
-
 export type GetMeResult =
   | { success: true; statusCode: number; message: string; data: Me }
   | { success: false; statusCode: number; message: string };

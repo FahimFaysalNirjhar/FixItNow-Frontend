@@ -1,5 +1,7 @@
 // app/(dashboardGroup)/admin-dashboard/page.tsx
 import { BadgeCheck, CalendarCheck, Tags, Users, Wrench } from "lucide-react";
+import { QuickActions } from "../_components/quick-actions";
+import { PageHeader } from "../_components/page-header";
 
 export default function AdminOverviewPage() {
   return (

@@ -20,10 +20,10 @@ export type NavItem = {
   exact?: boolean;
 };
 
-export const roleLabel: Record<Role, string> = {
-  CUSTOMER: "Customer",
+export const roleLabel: Record<string, string> = {
+  ADMIN: "Administrator",
   TECHNICIAN: "Technician",
-  ADMIN: "Admin",
+  CUSTOMER: "Customer",
 };
 
 export const navByRole: Record<Role, NavItem[]> = {

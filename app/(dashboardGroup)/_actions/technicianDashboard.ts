@@ -9,9 +9,14 @@ export type DashboardBooking = {
 };
 
 export type TechnicianSummary = {
-  averageRating?: number;
-  isAvailable?: boolean;
-  _count?: { services?: number; bookings?: number; reviews?: number };
+  // ...your existing fields
+  experience?: number | null;
+  hourlyRate?: number | null;
+  location?: string | null;
+  bio?: string | null;
+  isAvailable?: boolean; // add only if missing
+  averageRating?: number | null; // add only if missing
+  _count?: { reviews: number }; // add only if missing
 };
 
 type Failure = { success: false; statusCode: number; message: string };

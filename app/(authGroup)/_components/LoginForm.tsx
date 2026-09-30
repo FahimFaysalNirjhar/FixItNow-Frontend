@@ -34,7 +34,7 @@ const DEMO_ACCOUNTS = [
     label: "Admin",
     icon: ShieldCheck,
     email: "admin@example.com",
-    password: "password123",
+    password: "Password@123",
   },
 ];
 
