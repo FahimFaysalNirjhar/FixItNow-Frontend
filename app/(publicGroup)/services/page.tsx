@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SearchX } from "lucide-react";
-import { getCategories } from "@/service/getCategories";
+import { getCategories } from "@/app/(publicGroup)/_actions/getCategories";
 import { getServices } from "@/app/(publicGroup)/_actions/getServices";
 import { ServicesFilter } from "./_components/services-filter";
 import { ServiceCard } from "./_components/service-card";

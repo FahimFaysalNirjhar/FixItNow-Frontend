@@ -74,3 +74,34 @@ export const getServices = async (
     };
   }
 };
+
+export type GetServiceResult =
+  | { success: true; data: Service }
+  | { success: false; statusCode: number; message: string };
+
+export const getService = async (id: string): Promise<GetServiceResult> => {
+  try {
+    const res = await fetch(
+      `${process.env.BACKEND_API_URL}/api/services/${encodeURIComponent(id)}`,
+      { next: { revalidate: 60, tags: ["services", `service-${id}`] } },
+    );
+    const result = await res.json();
+
+    if (!result?.success) {
+      return {
+        success: false,
+        statusCode: result?.statusCode ?? res.status,
+        message: result?.message ?? "Could not load this service.",
+      };
+    }
+
+    // Handles { data: service } and { data: { service } }
+    return { success: true, data: result.data?.service ?? result.data };
+  } catch {
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Could not reach the server. Please try again.",
+    };
+  }
+};
