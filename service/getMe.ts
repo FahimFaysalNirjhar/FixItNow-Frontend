@@ -4,13 +4,13 @@ import { isAccessTokenExist } from "./isAccessTokenExist";
 
 export type Me = {
   id: string;
-  name: string;
-  email: string;
+  name?: string;
+  email?: string;
   role: "CUSTOMER" | "TECHNICIAN" | "ADMIN";
   status?: string;
-  profilePhoto: string | null;
-  phone: string | null;
-  address: string | null;
+  profilePhoto?: string | null;
+  phone?: string | null;
+  address?: string | null;
   technicianProfile?: Record<string, unknown> | null;
 };
 
@@ -19,7 +19,6 @@ export type GetMeResult =
   | { success: false; statusCode: number; message: string };
 
 export const getMe = async (): Promise<GetMeResult> => {
-  // Returns a valid (possibly refreshed) token, or null/throws if logged out
   let accessToken: string | null = null;
   try {
     accessToken = await isAccessTokenExist();
@@ -33,16 +32,14 @@ export const getMe = async (): Promise<GetMeResult> => {
 
   try {
     const res = await fetch(`${process.env.BACKEND_API_URL}/api/users/me`, {
-      headers: {
-        cookie: `accessToken=${accessToken}`,
-      },
-      next: {
-        revalidate: 60 * 5, // 5 minutes
-        tags: ["my-profile"],
-      },
+      headers: { cookie: `accessToken=${accessToken}` },
+      next: { revalidate: 60 * 5, tags: ["my-profile"] },
     });
 
     const result = await res.json();
+
+    // Temporary: shows the real shape of the response. Remove once it works.
+    console.log("ME →", JSON.stringify(result, null, 2));
 
     if (!result?.success) {
       return {
@@ -52,11 +49,17 @@ export const getMe = async (): Promise<GetMeResult> => {
       };
     }
 
+    // Handles { data: user }, { data: { user } } and { data: { profile } }
+    const profile = result.data?.user ?? result.data?.profile ?? result.data;
+
     return {
       success: true,
       statusCode: result.statusCode ?? 200,
       message: result.message ?? "Profile fetched successfully",
-      data: result.data,
+      data: {
+        ...profile,
+        name: profile?.name ?? profile?.fullName,
+      },
     };
   } catch {
     return {
