@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -40,26 +41,14 @@ export function DashboardSidebar({ user }: { user: Me }) {
   const label = roleLabel[user.role] ?? "Customer";
 
   return (
-    // top-16 / 4rem keeps the sidebar below the site navbar on desktop
-    <Sidebar className="top-16 h-[calc(100svh-4rem)]">
-      <SidebarHeader className="border-b border-sidebar-border p-4">
-        <div className="flex items-center gap-3">
-          <Avatar className="size-10 border border-[#c9a45c]/60">
-            {user.profilePhoto && (
-              <AvatarImage src={user.profilePhoto} alt={user.name ?? "User"} />
-            )}
-            <AvatarFallback className="bg-white text-xs font-semibold text-[#2c4a6e]">
-              {initials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-
-          <div className="min-w-0">
-            <p className="truncate font-serif text-sm font-semibold text-sidebar-foreground">
-              {user.name ?? "My account"}
-            </p>
-            <p className="truncate text-xs text-[#b8892f]">{label}</p>
-          </div>
-        </div>
+    <Sidebar>
+      <SidebarHeader className="h-14 justify-center border-b border-[#c9a45c]/30 px-4">
+        <Link href="/" className="flex items-center gap-2">
+          {/* <Image src="/logo.png" alt="FixItNow" width={28} height={28} /> */}
+          <span className="font-serif text-lg font-bold text-[#2c4a6e]">
+            FixIt<span className="text-[#b8892f]">Now</span>
+          </span>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>
@@ -96,6 +85,31 @@ export function DashboardSidebar({ user }: { user: Me }) {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t border-[#c9a45c]/30 p-3">
+        <Link
+          href="/profile"
+          onClick={() => setOpenMobile(false)}
+          className="flex items-center gap-3 rounded-md p-1.5 transition-colors hover:bg-[#c9a45c]/10"
+        >
+          <Avatar className="size-9 border border-[#c9a45c]/60">
+            {user.profilePhoto && (
+              <AvatarImage src={user.profilePhoto} alt={user.name ?? "User"} />
+            )}
+            <AvatarFallback className="bg-[#faf6ee] text-xs font-semibold text-[#2c4a6e]">
+              {initials(user.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0">
+            <p className="truncate font-serif text-sm font-semibold text-[#2c4a6e]">
+              {user.name ?? "My account"}
+            </p>
+            <p className="truncate font-serif text-xs text-[#b8892f]">
+              {label}
+            </p>
+          </div>
+        </Link>
+      </SidebarFooter>
     </Sidebar>
   );
 }
