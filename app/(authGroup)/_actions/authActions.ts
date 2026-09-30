@@ -62,11 +62,11 @@ export const loginAction = async (
       body: JSON.stringify(payload),
     });
 
-    console.log(
-      "LOGIN RESPONSE →",
-      res.status,
-      JSON.stringify(result, null, 2),
-    );
+    // console.log(
+    //   "LOGIN RESPONSE →",
+    //   res.status,
+    //   JSON.stringify(result, null, 2),
+    // );
     result = await res.json();
   } catch {
     return {
@@ -149,7 +149,7 @@ async function isPhoneTaken(phone: string): Promise<boolean | null> {
   try {
     const res = await fetch(url, { cache: "no-store" });
     const text = await res.text();
-    console.log("CHECK PHONE →", url, res.status, text);
+    // console.log("CHECK PHONE →", url, res.status, text);
 
     const result = JSON.parse(text);
     if (!res.ok || !result.success) return null;
