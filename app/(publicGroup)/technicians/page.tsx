@@ -2,16 +2,15 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SearchX } from "lucide-react";
-import { getCategories } from "@/service/getCategories";
-import { getServices } from "@/app/(publicGroup)/_actions/getServices";
-import { ServicesFilter } from "./_components/services-filter";
-import { ServiceCard } from "./_components/service-card";
-import Loading from "@/app/loading";
 import { Pagination } from "@/components/shared/pagination";
+import { TechniciansFilter } from "./_components/technicians-filter";
+import { getTechnicians } from "../_actions/getTechnicians";
+import { TechnicianCard } from "./_components/technician-card";
+import Loading from "@/app/loading";
 
 export const metadata: Metadata = {
-  title: "Services | FixItNow",
-  description: "Browse and book trusted technicians for home services.",
+  title: "Technicians | FixItNow",
+  description: "Meet verified technicians and book the right one for the job.",
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -19,12 +18,7 @@ type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const first = (value?: string | string[]) =>
   (Array.isArray(value) ? value[0] : value) ?? "";
 
-async function FilterSlot() {
-  const categories = await getCategories();
-  return <ServicesFilter categories={categories} />;
-}
-
-async function ServicesResults({
+async function TechniciansResults({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -34,7 +28,7 @@ async function ServicesResults({
     Object.entries(raw).map(([key, value]) => [key, first(value)]),
   );
 
-  const result = await getServices(params);
+  const result = await getTechnicians(params);
 
   if (!result.success) {
     return (
@@ -51,13 +45,13 @@ async function ServicesResults({
       <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-[#c9a45c]/50 bg-white/60 px-6 py-16 text-center dark:bg-slate-900/60">
         <SearchX className="size-10 text-[#b8892f] dark:text-[#d4b06a]" />
         <h2 className="font-serif text-xl font-semibold text-[#2c4a6e] dark:text-slate-200">
-          No services found
+          No technicians found
         </h2>
         <p className="max-w-sm font-serif text-sm italic text-slate-500 dark:text-slate-400">
           Try changing your filters or searching for something else.
         </p>
         <Link
-          href="/services"
+          href="/technicians"
           className="font-serif text-sm font-medium text-[#b8892f] hover:underline dark:text-[#d4b06a]"
         >
           Clear all filters
@@ -80,26 +74,26 @@ async function ServicesResults({
         <span className="font-semibold text-[#2c4a6e] dark:text-slate-200">
           {meta.total}
         </span>{" "}
-        services
+        technicians
       </p>
 
       <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-        {data.map((service) => (
-          <ServiceCard key={service.id} service={service} />
+        {data.map((technician) => (
+          <TechnicianCard key={technician.id} technician={technician} />
         ))}
       </div>
 
       <Pagination
         page={meta.page}
         totalPage={meta.totalPage}
-        basePath="/services"
+        basePath="/technicians"
         params={params}
       />
     </div>
   );
 }
 
-export default function ServicesPage({
+export default function TechniciansPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -110,25 +104,27 @@ export default function ServicesPage({
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
           <h1 className="font-serif text-4xl font-semibold tracking-tight text-[#2c4a6e] dark:text-slate-200">
             Our{" "}
-            <span className="text-[#b8892f] dark:text-[#d4b06a]">Services</span>
+            <span className="text-[#b8892f] dark:text-[#d4b06a]">
+              Technicians
+            </span>
           </h1>
           <p className="mt-2 font-serif italic text-slate-500 dark:text-slate-400">
-            Find the right professional for the job.
+            Skilled professionals, ready when you are.
           </p>
         </div>
       </section>
 
       <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[280px_1fr] lg:gap-8">
         <Suspense fallback={<div className="hidden lg:block" />}>
-          <FilterSlot />
+          <TechniciansFilter />
         </Suspense>
 
         <Suspense
           fallback={
-            <Loading fullScreen={false} message="Finding services..." />
+            <Loading fullScreen={false} message="Finding technicians..." />
           }
         >
-          <ServicesResults searchParams={searchParams} />
+          <TechniciansResults searchParams={searchParams} />
         </Suspense>
       </div>
     </div>

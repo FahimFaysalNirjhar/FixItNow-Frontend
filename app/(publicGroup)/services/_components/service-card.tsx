@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MapPin, Star, Wrench } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import type { Service } from "@/service/service.types";
+import type { Service } from "@/app/(publicGroup)/_actions/service.types";
 
 const formatPrice = (price: number) =>
   `৳${new Intl.NumberFormat("en-US").format(Number(price))}`;
@@ -26,7 +26,7 @@ export function ServiceCard({ service }: { service: Service }) {
       href={`/services/${service.id}`}
       className="group flex flex-col overflow-hidden rounded-xl border border-[#c9a45c]/30 bg-white transition hover:-translate-y-0.5 hover:border-[#b8892f] hover:shadow-md dark:bg-slate-900"
     >
-      <div className="flex h-28 items-center justify-center bg-gradient-to-br from-[#faf6ee] to-[#c9a45c]/25 dark:from-white/5 dark:to-[#d4b06a]/10">
+      <div className="flex h-28 items-center justify-center bg-linear-to-br from-[#faf6ee] to-[#c9a45c]/25 dark:from-white/5 dark:to-[#d4b06a]/10">
         <Wrench
           className="size-9 text-[#2c4a6e]/70 transition group-hover:text-[#b8892f] dark:text-slate-300"
           strokeWidth={1.5}

@@ -1,4 +1,4 @@
-import type { Category } from "./service.types";
+import type { Category } from "../app/(publicGroup)/_actions/service.types";
 
 // Assumes GET /api/categories returns a list of { id, name }.
 // If the endpoint fails, the category filter simply hides itself.

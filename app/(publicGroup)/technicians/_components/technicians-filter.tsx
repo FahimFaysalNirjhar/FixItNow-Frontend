@@ -7,13 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -22,31 +15,29 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import {
-  SORT_OPTIONS,
-  type Category,
-} from "@/app/(publicGroup)/_actions/service.types";
+  RATING_OPTIONS,
+  TECHNICIAN_SORT_OPTIONS,
+} from "../../_actions/technician.types";
 
 type Values = {
   searchTerm: string;
-  categoryId: string;
   location: string;
-  minPrice: string;
-  maxPrice: string;
+  available: boolean;
+  minRating: string;
   sort: string;
 };
 
 const fieldClass =
   "h-10 border-[#c9a45c]/40 bg-white text-[#2c4a6e] focus-visible:border-[#b8892f] focus-visible:ring-[#b8892f]/30 dark:bg-white/5 dark:text-slate-200";
 
-const itemClass =
-  "cursor-pointer font-serif !text-[#2c4a6e] focus:!bg-[#c9a45c]/15 focus:!text-[#2c4a6e]";
+// Native <select>: always readable, no custom hover colors to fight with
+const selectClass =
+  "h-10 w-full rounded-md border border-[#c9a45c]/40 bg-white px-3 text-sm text-[#2c4a6e] outline-none focus-visible:border-[#b8892f] focus-visible:ring-[3px] focus-visible:ring-[#b8892f]/30 dark:bg-slate-800 dark:text-slate-200";
 
 function FilterForm({
-  categories,
   initial,
   onDone,
 }: {
-  categories: Category[];
   initial: Values;
   onDone?: () => void;
 }) {
@@ -56,10 +47,9 @@ function FilterForm({
   const [pending, startTransition] = useTransition();
 
   const [searchTerm, setSearchTerm] = useState(initial.searchTerm);
-  const [categoryId, setCategoryId] = useState(initial.categoryId);
   const [location, setLocation] = useState(initial.location);
-  const [minPrice, setMinPrice] = useState(initial.minPrice);
-  const [maxPrice, setMaxPrice] = useState(initial.maxPrice);
+  const [available, setAvailable] = useState(initial.available);
+  const [minRating, setMinRating] = useState(initial.minRating);
   const [sort, setSort] = useState(initial.sort);
 
   const go = (params: URLSearchParams) => {
@@ -73,16 +63,11 @@ function FilterForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    let min = minPrice.trim();
-    let max = maxPrice.trim();
-    if (min && max && Number(min) > Number(max)) [min, max] = [max, min];
-
     const params = new URLSearchParams();
     if (searchTerm.trim()) params.set("searchTerm", searchTerm.trim());
-    if (categoryId !== "all") params.set("categoryId", categoryId);
     if (location.trim()) params.set("location", location.trim());
-    if (min) params.set("minPrice", min);
-    if (max) params.set("maxPrice", max);
+    if (available) params.set("isAvailable", "true");
+    if (minRating !== "any") params.set("minRating", minRating);
     if (sort !== "newest") params.set("sort", sort);
 
     go(params); // page resets to 1 because "page" is not carried over
@@ -98,36 +83,11 @@ function FilterForm({
             id={`${uid}-search`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="e.g. AC repair"
+            placeholder="Name, skill or area"
             className={`${fieldClass} pl-9`}
           />
         </div>
       </div>
-
-      {categories.length > 0 && (
-        <div className="space-y-1.5">
-          <Label>Category</Label>
-          <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger className={`${fieldClass} w-full`}>
-              <SelectValue placeholder="All categories" />
-            </SelectTrigger>
-            <SelectContent className="border-[#c9a45c]/30 bg-[#faf6ee]">
-              <SelectItem value="all" className={itemClass}>
-                All categories
-              </SelectItem>
-              {categories.map((category) => (
-                <SelectItem
-                  key={category.id}
-                  value={category.id}
-                  className={itemClass}
-                >
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
 
       <div className="space-y-1.5">
         <Label htmlFor={`${uid}-location`}>Location</Label>
@@ -141,49 +101,51 @@ function FilterForm({
       </div>
 
       <div className="space-y-1.5">
-        <Label>Price range (৳)</Label>
-        <div className="grid grid-cols-2 gap-2">
-          <Input
-            type="number"
-            min={0}
-            inputMode="numeric"
-            aria-label="Minimum price"
-            value={minPrice}
-            onChange={(e) => setMinPrice(e.target.value)}
-            placeholder="Min"
-            className={fieldClass}
-          />
-          <Input
-            type="number"
-            min={0}
-            inputMode="numeric"
-            aria-label="Maximum price"
-            value={maxPrice}
-            onChange={(e) => setMaxPrice(e.target.value)}
-            placeholder="Max"
-            className={fieldClass}
-          />
-        </div>
+        <Label htmlFor={`${uid}-rating`}>Minimum rating</Label>
+        <select
+          id={`${uid}-rating`}
+          value={minRating}
+          onChange={(e) => setMinRating(e.target.value)}
+          className={selectClass}
+        >
+          {RATING_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
+      <label
+        htmlFor={`${uid}-available`}
+        className="flex cursor-pointer items-center gap-2.5 rounded-md border border-[#c9a45c]/40 bg-white p-3 dark:bg-white/5"
+      >
+        <input
+          id={`${uid}-available`}
+          type="checkbox"
+          checked={available}
+          onChange={(e) => setAvailable(e.target.checked)}
+          className="size-4 accent-[#b8892f]"
+        />
+        <span className="font-serif text-sm text-[#2c4a6e] dark:text-slate-200">
+          Available now only
+        </span>
+      </label>
+
       <div className="space-y-1.5">
-        <Label>Sort by</Label>
-        <Select value={sort} onValueChange={setSort}>
-          <SelectTrigger className={`${fieldClass} w-full`}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="border-[#c9a45c]/30 bg-[#faf6ee]">
-            {SORT_OPTIONS.map((option) => (
-              <SelectItem
-                key={option.value}
-                value={option.value}
-                className={itemClass}
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <Label htmlFor={`${uid}-sort`}>Sort by</Label>
+        <select
+          id={`${uid}-sort`}
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className={selectClass}
+        >
+          {TECHNICIAN_SORT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="flex gap-2 pt-1">
@@ -210,19 +172,21 @@ function FilterForm({
   );
 }
 
-export function ServicesFilter({ categories }: { categories: Category[] }) {
+export function TechniciansFilter() {
   const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
   const sortParam = searchParams.get("sort") ?? "newest";
+  const ratingParam = searchParams.get("minRating") ?? "any";
 
   const initial: Values = {
     searchTerm: searchParams.get("searchTerm") ?? "",
-    categoryId: searchParams.get("categoryId") ?? "all",
     location: searchParams.get("location") ?? "",
-    minPrice: searchParams.get("minPrice") ?? "",
-    maxPrice: searchParams.get("maxPrice") ?? "",
-    sort: SORT_OPTIONS.some((o) => o.value === sortParam)
+    available: searchParams.get("isAvailable") === "true",
+    minRating: RATING_OPTIONS.some((o) => o.value === ratingParam)
+      ? ratingParam
+      : "any",
+    sort: TECHNICIAN_SORT_OPTIONS.some((o) => o.value === sortParam)
       ? sortParam
       : "newest",
   };
@@ -231,13 +195,9 @@ export function ServicesFilter({ categories }: { categories: Category[] }) {
   const formKey = JSON.stringify(initial);
 
   const activeCount =
-    [
-      initial.searchTerm,
-      initial.location,
-      initial.minPrice,
-      initial.maxPrice,
-    ].filter(Boolean).length +
-    (initial.categoryId !== "all" ? 1 : 0) +
+    [initial.searchTerm, initial.location].filter(Boolean).length +
+    (initial.available ? 1 : 0) +
+    (initial.minRating !== "any" ? 1 : 0) +
     (initial.sort !== "newest" ? 1 : 0);
 
   return (
@@ -269,13 +229,12 @@ export function ServicesFilter({ categories }: { categories: Category[] }) {
                 Filters
               </SheetTitle>
               <SheetDescription className="sr-only">
-                Filter and sort services
+                Filter and sort technicians
               </SheetDescription>
             </SheetHeader>
             <div className="px-4 pb-6">
               <FilterForm
                 key={formKey}
-                categories={categories}
                 initial={initial}
                 onDone={() => setOpen(false)}
               />
@@ -291,7 +250,7 @@ export function ServicesFilter({ categories }: { categories: Category[] }) {
             <SlidersHorizontal className="size-4 text-[#b8892f] dark:text-[#d4b06a]" />
             Filters
           </h2>
-          <FilterForm key={formKey} categories={categories} initial={initial} />
+          <FilterForm key={formKey} initial={initial} />
         </div>
       </aside>
     </>

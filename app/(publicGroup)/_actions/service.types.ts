@@ -1,3 +1,10 @@
+export type AvailabilitySlot = {
+  id: string;
+  day: string | number;
+  startTime: string;
+  endTime: string;
+};
+
 export type Service = {
   id: string;
   title: string;
@@ -7,10 +14,14 @@ export type Service = {
   category?: { id: string; name: string } | null;
   technician?: {
     id: string;
+    bio?: string | null;
     averageRating?: number;
     location?: string | null;
     experience?: number;
+    hourlyRate?: number;
+    isAvailable?: boolean;
     user?: { name?: string; profilePhoto?: string | null } | null;
+    availability?: AvailabilitySlot[];
   } | null;
 };
 

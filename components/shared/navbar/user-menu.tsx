@@ -75,11 +75,11 @@ export function UserMenu({ user }: { user: Me }) {
         className="w-64 border-[#c9a45c]/30 bg-[#faf6ee] p-1 text-[#2c4a6e]"
       >
         <DropdownMenuLabel className="space-y-0.5">
-          <p className="truncate font-serif text-sm font-semibold !text-[#2c4a6e]">
+          <p className="truncate font-serif text-sm font-semibold text-[#2c4a6e]!">
             {user.name ?? user.email ?? "My account"}
           </p>
           {user.name && user.email && (
-            <p className="truncate text-xs font-normal !text-slate-500">
+            <p className="truncate text-xs font-normal text-slate-500!">
               {user.email}
             </p>
           )}

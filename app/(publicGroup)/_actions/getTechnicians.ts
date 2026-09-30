@@ -1,67 +1,66 @@
 import {
-  PAGE_SIZE,
-  SORT_OPTIONS,
-  type Service,
-  type ServiceMeta,
-} from "./service.types";
+  TECHNICIAN_PAGE_SIZE,
+  TECHNICIAN_SORT_OPTIONS,
+  type Technician,
+  type TechnicianMeta,
+} from "./technician.types";
 
-export type ServiceFilters = {
+export type TechnicianFilters = {
   searchTerm?: string;
-  categoryId?: string;
   location?: string;
-  minPrice?: string;
-  maxPrice?: string;
+  isAvailable?: string;
+  minRating?: string;
   sort?: string;
   page?: string;
 };
 
-export type GetServicesResult =
-  | { success: true; data: Service[]; meta: ServiceMeta }
+export type GetTechniciansResult =
+  | { success: true; data: Technician[]; meta: TechnicianMeta }
   | { success: false; message: string };
 
-export const getServices = async (
-  filters: ServiceFilters,
-): Promise<GetServicesResult> => {
+export const getTechnicians = async (
+  filters: TechnicianFilters,
+): Promise<GetTechniciansResult> => {
   const sort =
-    SORT_OPTIONS.find((o) => o.value === filters.sort) ?? SORT_OPTIONS[0];
+    TECHNICIAN_SORT_OPTIONS.find((o) => o.value === filters.sort) ??
+    TECHNICIAN_SORT_OPTIONS[0];
   const page = Math.max(Number(filters.page) || 1, 1);
 
   const params = new URLSearchParams({
     page: String(page),
-    limit: String(PAGE_SIZE),
+    limit: String(TECHNICIAN_PAGE_SIZE),
     sortBy: sort.sortBy,
     sortOrder: sort.sortOrder,
   });
 
   if (filters.searchTerm) params.set("searchTerm", filters.searchTerm);
-  if (filters.categoryId) params.set("categoryId", filters.categoryId);
   if (filters.location) params.set("location", filters.location);
-  if (filters.minPrice) params.set("minPrice", filters.minPrice);
-  if (filters.maxPrice) params.set("maxPrice", filters.maxPrice);
+  if (filters.isAvailable === "true") params.set("isAvailable", "true");
+  if (filters.minRating) params.set("minRating", filters.minRating);
 
   try {
     const res = await fetch(
-      `${process.env.BACKEND_API_URL}/api/services?${params.toString()}`,
-      { cache: "no-store" },
+      `${process.env.BACKEND_API_URL}/api/technician?${params.toString()}`,
+      { next: { revalidate: 60, tags: ["technicians"] } },
     );
     const result = await res.json();
 
     if (!result?.success) {
       return {
         success: false,
-        message: result?.message ?? "Could not load services.",
+        message: result?.message ?? "Could not load technicians.",
       };
     }
 
     // Works with both { data: [...], meta } and { data: { data: [...], meta } }
     const payload = result.data;
-    const data: Service[] = Array.isArray(payload)
+    const data: Technician[] = Array.isArray(payload)
       ? payload
       : (payload?.data ?? []);
-    const meta: ServiceMeta = result.meta ??
+    const meta: TechnicianMeta = result.meta ??
       payload?.meta ?? {
         page,
-        limit: PAGE_SIZE,
+        limit: TECHNICIAN_PAGE_SIZE,
         total: data.length,
         totalPage: 1,
       };
