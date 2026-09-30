@@ -27,14 +27,17 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.875rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.666 0.179 58.318);
-  --sidebar-primary-foreground: oklch(0.987 0.022 95.277);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Sidebar: cream, navy and gold to match the site */
+  --sidebar: #faf6ee;
+  --sidebar-foreground: #2c4a6e;
+  --sidebar-primary: #2c4a6e;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #efe2c0;
+  --sidebar-accent-foreground: #2c4a6e;
+  --sidebar-border: #e4d3a6;
+  --sidebar-ring: #b8892f;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
 }
