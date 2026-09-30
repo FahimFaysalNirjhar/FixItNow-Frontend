@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Briefcase, MapPin, Star } from "lucide-react";
+import { ArrowRight, Briefcase, MapPin, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Technician } from "../../_actions/technician.types";
+import type { Technician } from "../../_actions/technician.types";
 
 const formatPrice = (price: number) =>
   `৳${new Intl.NumberFormat("en-US").format(Number(price))}`;
@@ -30,10 +31,7 @@ export function TechnicianCard({ technician }: { technician: Technician }) {
   );
 
   return (
-    <Link
-      href={`/technicians/${technician.id}`}
-      className="group flex flex-col gap-4 rounded-xl border border-[#c9a45c]/30 bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#b8892f] hover:shadow-md dark:bg-slate-900"
-    >
+    <div className="group relative flex flex-col gap-4 rounded-xl border border-[#c9a45c]/30 bg-white p-5 transition hover:-translate-y-0.5 hover:border-[#b8892f] hover:shadow-md dark:bg-slate-900">
       <div className="flex items-start gap-4">
         <Avatar className="size-16 border border-[#c9a45c]/60">
           {technician.user?.profilePhoto && (
@@ -122,6 +120,24 @@ export function TechnicianCard({ technician }: { technician: Technician }) {
           <span className="text-xs font-normal text-slate-500">/hr</span>
         </span>
       </div>
-    </Link>
+
+      {/* The after: classes stretch this link over the whole card */}
+      <Button
+        asChild
+        className="h-10 w-full gap-2 bg-[#2c4a6e] font-serif text-white hover:bg-[#2c4a6e]/90 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-200/90"
+      >
+        <Link
+          href={`/technicians/${technician.id}`}
+          aria-label={`View details for ${name}`}
+          className="after:absolute after:inset-0 after:content-['']"
+        >
+          View details
+          <ArrowRight
+            className="size-4 transition-transform group-hover:translate-x-0.5"
+            aria-hidden
+          />
+        </Link>
+      </Button>
+    </div>
   );
 }
