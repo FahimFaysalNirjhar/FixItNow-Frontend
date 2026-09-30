@@ -68,4 +68,11 @@ export const SORT_OPTIONS: {
   },
 ];
 
+export type Props = {
+  serviceId: string;
+  serviceTitle: string;
+  price: string;
+  availability?: AvailabilitySlot[];
+};
+
 export const PAGE_SIZE = 9;

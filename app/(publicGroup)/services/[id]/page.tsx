@@ -1,19 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  Briefcase,
-  CalendarCheck,
-  MapPin,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, Briefcase, MapPin, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 import { getService } from "../../_actions/getServices";
 import { AvailabilitySchedule } from "../_components/availability-schedule";
 import Loading from "@/app/loading";
+import { BookingDialog } from "../_components/booking-dialog";
 
 type Params = Promise<{ id: string }>;
 
@@ -189,15 +184,12 @@ async function ServiceDetails({ params }: { params: Params }) {
               </p>
             </div>
 
-            <Button
-              asChild
-              className="h-11 w-full gap-2 bg-[#2c4a6e] text-white hover:bg-[#2c4a6e]/90 dark:bg-slate-200 dark:text-slate-900 dark:hover:bg-slate-200/90"
-            >
-              <Link href={`/dashboard/book/${service.id}`}>
-                <CalendarCheck className="size-4" aria-hidden />
-                Book this service
-              </Link>
-            </Button>
+            <BookingDialog
+              serviceId={service.id}
+              serviceTitle={service.title}
+              price={formatPrice(service.price)}
+              availability={technician?.availability ?? []}
+            />
 
             <p className="text-center font-serif text-xs italic text-slate-500 dark:text-slate-400">
               You&apos;ll be asked to log in to choose a time.

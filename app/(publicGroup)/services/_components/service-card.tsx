@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Star, Wrench } from "lucide-react";
+import { ArrowRight, MapPin, Star, Wrench } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Service } from "@/app/(publicGroup)/_actions/service.types";
 
@@ -22,10 +22,7 @@ export function ServiceCard({ service }: { service: Service }) {
   const location = service.location ?? technician?.location;
 
   return (
-    <Link
-      href={`/services/${service.id}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-[#c9a45c]/30 bg-white transition hover:-translate-y-0.5 hover:border-[#b8892f] hover:shadow-md dark:bg-slate-900"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-[#c9a45c]/30 bg-white transition hover:-translate-y-0.5 hover:border-[#b8892f] hover:shadow-md dark:bg-slate-900">
       <div className="flex h-28 items-center justify-center bg-linear-to-br from-[#faf6ee] to-[#c9a45c]/25 dark:from-white/5 dark:to-[#d4b06a]/10">
         <Wrench
           className="size-9 text-[#2c4a6e]/70 transition group-hover:text-[#b8892f] dark:text-slate-300"
@@ -83,8 +80,20 @@ export function ServiceCard({ service }: { service: Service }) {
               {formatPrice(service.price)}
             </span>
           </div>
+
+          {/* View details: after:absolute after:inset-0 stretches the link over the whole card */}
+          <Link
+            href={`/services/${service.id}`}
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#2c4a6e] px-4 py-2.5 font-serif text-sm font-medium text-white transition after:absolute after:inset-0 after:content-[''] hover:bg-[#b8892f] dark:bg-[#d4b06a] dark:text-slate-900 dark:hover:bg-[#b8892f] dark:hover:text-white"
+          >
+            View details
+            <ArrowRight
+              className="size-4 transition group-hover:translate-x-0.5"
+              aria-hidden
+            />
+          </Link>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
