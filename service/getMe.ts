@@ -39,7 +39,7 @@ export const getMe = async (): Promise<GetMeResult> => {
     const result = await res.json();
 
     // Temporary: shows the real shape of the response. Remove once it works.
-    console.log("ME →", JSON.stringify(result, null, 2));
+    // console.log("ME →", JSON.stringify(result, null, 2));
 
     if (!result?.success) {
       return {
