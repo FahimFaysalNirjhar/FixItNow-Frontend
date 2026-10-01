@@ -2,6 +2,7 @@ import {
   BadgeCheck,
   CalendarCheck,
   Clock,
+  CreditCard, // new
   LayoutDashboard,
   Star,
   Tags,
@@ -35,6 +36,7 @@ export const navByRole: Record<Role, NavItem[]> = {
       exact: true,
     },
     { label: "My bookings", href: "/dashboard/bookings", icon: CalendarCheck },
+    { label: "Payments", href: "/dashboard/payments", icon: CreditCard }, // new
     { label: "My reviews", href: "/dashboard/reviews", icon: Star },
     { label: "Profile", href: "/profile", icon: UserCircle },
   ],

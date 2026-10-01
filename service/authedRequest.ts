@@ -5,7 +5,7 @@ export type AuthedResult =
   | { success: false; statusCode: number; message: string };
 
 export async function authedRequest(
-  method: "POST" | "PATCH" | "DELETE",
+  method: "GET" | "POST" | "PATCH" | "DELETE",
   path: string,
   body?: unknown,
 ): Promise<AuthedResult> {

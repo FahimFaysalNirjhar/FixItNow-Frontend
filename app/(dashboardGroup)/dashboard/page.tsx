@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import {
   CalendarCheck,
+  CreditCard,
   Mail,
   MapPin,
   Phone,
@@ -44,6 +45,12 @@ async function Overview() {
             description: "Track upcoming and past bookings.",
             href: "/dashboard/bookings",
             icon: CalendarCheck,
+          },
+          {
+            title: "Payment history",
+            description: "View receipts and payment status.",
+            href: "/dashboard/payments",
+            icon: CreditCard,
           },
         ]}
       />

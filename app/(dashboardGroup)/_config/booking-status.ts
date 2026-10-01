@@ -52,3 +52,9 @@ export const NEXT_ACTIONS: Record<string, NextAction[]> = {
     },
   ],
 };
+
+// Customer rules, matching customerService.cancelBooking on the backend
+export const canCustomerCancel = (status: string) => status === "REQUESTED";
+
+export const canCustomerPay = (status: string, paymentStatus?: string | null) =>
+  (status === "ACCEPTED" || status === "COMPLETED") && paymentStatus !== "PAID";
