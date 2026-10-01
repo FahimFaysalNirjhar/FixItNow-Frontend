@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { authedRequest } from "@/service/authedRequest";
-import { CUSTOMER_API, PAYMENT_API } from "../_config/api-paths";
+import { CUSTOMER_API, PAYMENT_API, REVIEW_API } from "../_config/api-paths";
 
 export type CustomerActionResult = {
   success: boolean;
@@ -52,4 +52,26 @@ export const startCheckoutAction = async (
     message: "Redirecting to payment...",
     paymentUrl: url,
   };
+};
+
+export const createReviewAction = async (
+  bookingId: string,
+  rating: number,
+  comment: string,
+): Promise<CustomerActionResult> => {
+  if (!bookingId || !Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return { success: false, message: "Please select a rating from 1 to 5." };
+  }
+
+  const result = await authedRequest("POST", REVIEW_API, {
+    bookingId,
+    rating,
+    comment: comment.trim(),
+  });
+
+  if (!result.success) return { success: false, message: result.message };
+
+  revalidatePath("/dashboard/bookings");
+  revalidatePath("/dashboard/reviews");
+  return { success: true, message: "Thanks for your review!" };
 };

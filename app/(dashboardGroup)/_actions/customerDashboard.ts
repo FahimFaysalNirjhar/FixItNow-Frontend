@@ -23,6 +23,7 @@ export type CustomerBooking = {
     } | null;
   } | null;
   payment?: { status?: string } | null;
+  reviews?: { id: string; rating: number; comment?: string | null }[];
 };
 
 export const getCustomerBookings = async (): Promise<
@@ -40,4 +41,29 @@ export const getCustomerBookings = async (): Promise<
     success: true,
     data: Array.isArray(data) ? data : (data?.bookings ?? data?.data ?? []),
   };
+};
+
+export const getCustomerBooking = async (
+  id: string,
+): Promise<
+  | { success: true; data: CustomerBooking }
+  | { success: false; statusCode: number; message: string }
+> => {
+  const result = await authedRequest(
+    "GET",
+    `${CUSTOMER_API}/bookings/${encodeURIComponent(id)}`,
+  );
+  if (!result.success) return result;
+
+  const data = result.data as
+    | CustomerBooking
+    | { booking?: CustomerBooking; data?: CustomerBooking };
+
+  const booking = "id" in data ? data : (data.booking ?? data.data ?? null);
+
+  if (!booking) {
+    return { success: false, statusCode: 404, message: "Booking not found." };
+  }
+
+  return { success: true, data: booking };
 };

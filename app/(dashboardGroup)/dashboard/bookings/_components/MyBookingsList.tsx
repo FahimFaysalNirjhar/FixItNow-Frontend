@@ -175,12 +175,22 @@ export function MyBookingsList({ bookings }: { bookings: CustomerBooking[] }) {
               </p>
             )}
 
-            <CustomerBookingActions
-              bookingId={booking.id}
-              status={booking.status}
-              paymentStatus={paymentStatus}
-              serviceTitle={title}
-            />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <CustomerBookingActions
+                bookingId={booking.id}
+                status={booking.status}
+                paymentStatus={paymentStatus}
+                serviceTitle={title}
+                reviewRating={booking.reviews?.[0]?.rating ?? null}
+              />
+
+              <Link
+                href={`/dashboard/bookings/${booking.id}`}
+                className="text-sm text-[#2c4a6e] underline hover:text-[#b8892f]"
+              >
+                View details
+              </Link>
+            </div>
           </li>
         );
       })}
