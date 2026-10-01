@@ -102,3 +102,19 @@ export const getTechnicianProfile = async (): Promise<
       data) as TechnicianSummary,
   };
 };
+
+export const getMyAvailability = async (): Promise<
+  { success: true; data: AvailabilitySlot[] } | Failure
+> => {
+  const result = await authedGet("/api/technician/availability");
+  if (!result.success) return result;
+
+  const data = result.data as
+    | AvailabilitySlot[]
+    | { availability?: AvailabilitySlot[]; data?: AvailabilitySlot[] };
+
+  return {
+    success: true,
+    data: Array.isArray(data) ? data : (data?.availability ?? data?.data ?? []),
+  };
+};
