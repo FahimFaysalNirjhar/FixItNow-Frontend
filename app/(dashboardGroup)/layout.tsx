@@ -6,6 +6,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getMe } from "@/service/getMe";
 import { DashboardSidebar } from "./_components/DashboardSidebar";
+import { LogoutButton } from "./_components/LogoutButton";
 import { roleLabel } from "./_config/dashboard-nav";
 import Loading from "../loading";
 
@@ -39,7 +40,7 @@ async function DashboardFrame({ children }: { children: React.ReactNode }) {
               {roleLabel[user.role] ?? user.role} portal
             </span>
 
-            <div className="ml-auto flex items-center gap-4">
+            <div className="ml-auto flex items-center gap-3 sm:gap-4">
               <Link
                 href="/"
                 className="hidden items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-[#b8892f] sm:flex"
@@ -64,6 +65,8 @@ async function DashboardFrame({ children }: { children: React.ReactNode }) {
                   {user.name}
                 </span>
               </Link>
+
+              <LogoutButton />
             </div>
           </header>
 
