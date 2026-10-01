@@ -7,6 +7,7 @@ import { TechniciansFilter } from "./_components/technicians-filter";
 import { getTechnicians } from "../_actions/getTechnicians";
 import { TechnicianCard } from "./_components/technician-card";
 import Loading from "@/app/loading";
+import { FilterToggle } from "../_components/filter-toggle";
 
 export const metadata: Metadata = {
   title: "Technicians | FixItNow",
@@ -77,18 +78,20 @@ async function TechniciansResults({
         technicians
       </p>
 
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
         {data.map((technician) => (
           <TechnicianCard key={technician.id} technician={technician} />
         ))}
       </div>
 
-      <Pagination
-        page={meta.page}
-        totalPage={meta.totalPage}
-        basePath="/technicians"
-        params={params}
-      />
+      <div className="overflow-x-auto">
+        <Pagination
+          page={meta.page}
+          totalPage={meta.totalPage}
+          basePath="/technicians"
+          params={params}
+        />
+      </div>
     </div>
   );
 }
@@ -101,31 +104,35 @@ export default function TechniciansPage({
   return (
     <div className="bg-[#faf6ee]/40 dark:bg-slate-950">
       <section className="border-b border-[#c9a45c]/30">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-          <h1 className="font-serif text-4xl font-semibold tracking-tight text-[#2c4a6e] dark:text-slate-200">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+          <h1 className="font-serif text-3xl font-semibold tracking-tight text-[#2c4a6e] sm:text-4xl dark:text-slate-200">
             Our{" "}
             <span className="text-[#b8892f] dark:text-[#d4b06a]">
               Technicians
             </span>
           </h1>
-          <p className="mt-2 font-serif italic text-slate-500 dark:text-slate-400">
+          <p className="mt-2 font-serif text-sm italic text-slate-500 sm:text-base dark:text-slate-400">
             Skilled professionals, ready when you are.
           </p>
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[280px_1fr] lg:gap-8">
-        <Suspense fallback={<div className="hidden lg:block" />}>
-          <TechniciansFilter />
-        </Suspense>
+      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-8">
+        <FilterToggle>
+          <Suspense fallback={<div className="hidden lg:block" />}>
+            <TechniciansFilter />
+          </Suspense>
+        </FilterToggle>
 
-        <Suspense
-          fallback={
-            <Loading fullScreen={false} message="Finding technicians..." />
-          }
-        >
-          <TechniciansResults searchParams={searchParams} />
-        </Suspense>
+        <div className="min-w-0">
+          <Suspense
+            fallback={
+              <Loading fullScreen={false} message="Finding technicians..." />
+            }
+          >
+            <TechniciansResults searchParams={searchParams} />
+          </Suspense>
+        </div>
       </div>
     </div>
   );
