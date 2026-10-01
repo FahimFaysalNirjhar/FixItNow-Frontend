@@ -1,3 +1,4 @@
+import { AvailabilitySlot } from "@/app/(publicGroup)/_actions/service.types";
 import { isAccessTokenExist } from "@/service/isAccessTokenExist";
 
 export type DashboardBooking = {
@@ -28,6 +29,18 @@ export type TechnicianSummary = {
   isAvailable?: boolean; // add only if missing
   averageRating?: number | null; // add only if missing
   _count?: { reviews: number }; // add only if missing
+};
+
+export type MyService = {
+  id: string;
+  title: string;
+  description?: string | null;
+  price: number;
+  location?: string | null;
+  isActive: boolean;
+  categoryId?: string;
+  category?: { id: string; name: string } | null;
+  createdAt?: string;
 };
 
 type Failure = { success: false; statusCode: number; message: string };
@@ -117,4 +130,18 @@ export const getMyAvailability = async (): Promise<
     success: true,
     data: Array.isArray(data) ? data : (data?.availability ?? data?.data ?? []),
   };
+};
+
+export const getMyServices = async (): Promise<
+  { success: true; data: MyService[] } | Failure
+> => {
+  const result = await authedGet("/api/technician/profile");
+  if (!result.success) return result;
+
+  const raw = result.data as Record<string, unknown>;
+  const profile = (raw?.technicianProfile ?? raw?.profile ?? raw) as {
+    services?: MyService[];
+  };
+
+  return { success: true, data: profile?.services ?? [] };
 };
