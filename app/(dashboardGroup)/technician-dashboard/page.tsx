@@ -1,4 +1,3 @@
-// app/(dashboardGroup)/technician-dashboard/page.tsx
 import { Suspense } from "react";
 import Link from "next/link";
 import {
@@ -35,6 +34,9 @@ const formatDate = (value: string) =>
     timeZone: "Asia/Dhaka",
   });
 
+const isOpen = (status: string) =>
+  status !== "COMPLETED" && status !== "CANCELLED";
+
 async function Overview() {
   const [bookingsRes, profileRes] = await Promise.all([
     getTechnicianBookings(),
@@ -66,7 +68,7 @@ async function Overview() {
             asChild
             className="bg-[#2c4a6e] text-white hover:bg-[#2c4a6e]/90"
           >
-            <Link href="/technician-dashboard/profile">Create profile</Link>
+            <Link href="/profile">Create profile</Link>
           </Button>
         </div>
       </>
@@ -83,10 +85,24 @@ async function Overview() {
 
   const bookings = bookingsRes.data;
   const profile = profileRes.success ? profileRes.data : null;
-  const pending = bookings.filter((b) => b.status === "PENDING").length;
+
+  const requested = bookings.filter((b) => b.status === "REQUESTED").length;
   const completed = bookings.filter((b) => b.status === "COMPLETED").length;
   const rating = profile?.averageRating ?? 0;
-  const recent = bookings.slice(0, 5);
+
+  // Open bookings first (soonest first), then finished ones (most recent first)
+  const recent = [...bookings]
+    .sort((a, b) => {
+      const aOpen = isOpen(a.status);
+      const bOpen = isOpen(b.status);
+      if (aOpen !== bOpen) return aOpen ? -1 : 1;
+
+      const diff =
+        new Date(a.scheduledStart).getTime() -
+        new Date(b.scheduledStart).getTime();
+      return aOpen ? diff : -diff;
+    })
+    .slice(0, 5);
 
   return (
     <>
@@ -102,8 +118,8 @@ async function Overview() {
           icon={CalendarCheck}
         />
         <StatCard
-          label="Pending requests"
-          value={pending}
+          label="New requests"
+          value={requested}
           hint="Waiting for your response"
           icon={Clock}
         />

@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { DeleteServiceButton } from "./DeleteServiceButton";
 import { ServiceActiveToggle } from "./ServiceActiveToggle";
 import { ServiceFormDialog } from "./ServiceFormDialog";
+import { MyService } from "@/app/(dashboardGroup)/_actions/technicianDashboard";
+import { Category } from "@/app/(publicGroup)/_actions/service.types";
 
 const formatPrice = (price: number) =>
   `৳${new Intl.NumberFormat("en-US").format(Number(price))}`;
