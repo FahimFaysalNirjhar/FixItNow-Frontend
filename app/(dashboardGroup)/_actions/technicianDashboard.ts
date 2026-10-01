@@ -4,8 +4,19 @@ export type DashboardBooking = {
   id: string;
   status: string;
   scheduledStart: string;
-  customer?: { name?: string } | null;
-  service?: { title?: string; price?: number } | null;
+  scheduledEnd?: string | null;
+  customer?: {
+    name?: string;
+    phone?: string | null;
+    address?: string | null;
+    profilePhoto?: string | null;
+  } | null;
+  service?: {
+    title?: string;
+    price?: number;
+    category?: { name: string } | null;
+  } | null;
+  payment?: { status?: string } | null;
 };
 
 export type TechnicianSummary = {
