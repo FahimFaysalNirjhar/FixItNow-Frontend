@@ -28,6 +28,30 @@ export type AdminCategory = {
   _count?: { services?: number };
 };
 
+export type AdminBooking = {
+  id: string;
+  status: string;
+  scheduledStart: string;
+  scheduledEnd?: string | null;
+  totalAmount: number;
+  note?: string | null;
+  customer?: {
+    name?: string;
+    email?: string;
+    phone?: string | null;
+  } | null;
+  technician?: {
+    id: string;
+    user?: { name?: string; email?: string } | null;
+  } | null;
+  service?: {
+    id: string;
+    title?: string;
+    category?: { name: string } | null;
+  } | null;
+  payment?: { status?: string } | null;
+};
+
 export const getAllUsers = async (): Promise<
   | { success: true; data: AdminUser[] }
   | { success: false; statusCode: number; message: string }
@@ -59,5 +83,22 @@ export const getAdminCategories = async (): Promise<
   return {
     success: true,
     data: Array.isArray(data) ? data : (data?.categories ?? data?.data ?? []),
+  };
+};
+
+export const getAdminBookings = async (): Promise<
+  | { success: true; data: AdminBooking[] }
+  | { success: false; statusCode: number; message: string }
+> => {
+  const result = await authedRequest("GET", `${ADMIN_API}/bookings`);
+  if (!result.success) return result;
+
+  const data = result.data as
+    | AdminBooking[]
+    | { bookings?: AdminBooking[]; data?: AdminBooking[] };
+
+  return {
+    success: true,
+    data: Array.isArray(data) ? data : (data?.bookings ?? data?.data ?? []),
   };
 };
