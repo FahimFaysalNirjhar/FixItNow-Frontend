@@ -1,3 +1,5 @@
+import { AvailabilitySlot } from "./service.types";
+
 export type Technician = {
   id: string;
   bio?: string | null;

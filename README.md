@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FixItNow
 
-## Getting Started
+**Expert fixes, right at your door.**
 
-First, run the development server:
+FixItNow is a service booking platform that connects customers with trusted technicians. Customers browse services, request a time and pay securely online once the technician accepts. Technicians manage their services, availability and bookings, and admins oversee users and categories.
+
+This repository is the **Next.js frontend**.
+
+## Links
+
+|                     |                                                         |
+| ------------------- | ------------------------------------------------------- |
+| Frontend repository | https://github.com/FahimFaysalNirjhar/FixItNow-Frontend |
+| Backend repository  | https://github.com/FahimFaysalNirjhar/FixIT-Now         |
+| API base URL        | https://fix-it-now-assignment-4.vercel.app              |
+| Live site           | https://fixitnow-app-nine.vercel.app                    |
+
+## Demo accounts
+
+Use these on the login page (they are also available as quick-fill buttons).
+
+| Role       | Email                    | Password       |
+| ---------- | ------------------------ | -------------- |
+| Admin      | `admin@example.com`      | `Password@123` |
+| Customer   | `customer@example.com`   | `123456@Qa`    |
+| Technician | `technician@example.com` | `123456@Qa`    |
+
+## Features
+
+**Public**
+
+- Browse services with search, category, location and price filters, sorting and pagination
+- Browse technicians with search, location, availability and rating filters
+- Service and technician detail pages with availability and reviews
+- Register as a customer or a technician, with profile photo upload
+
+**Customer** (`/dashboard`)
+
+- Request a booking for a time slot
+- Track bookings and cancel them
+- Pay with Stripe Checkout once a technician accepts
+- View payment history
+- Review completed bookings
+
+**Technician** (`/technician-dashboard`)
+
+- Create and edit a technician profile
+- Add, edit, hide and delete services
+- Manage weekly availability slots
+- Accept, complete or cancel booking requests
+
+**Admin** (`/admin-dashboard`)
+
+- Block and unblock users and technicians
+- Create, rename and delete categories
+- View all bookings
+
+## Booking flow
+
+1. The customer sends a booking request (`REQUESTED`).
+2. The technician accepts it (`ACCEPTED`) or cancels it (`CANCELLED`).
+3. The customer pays through Stripe Checkout.
+4. The technician marks the job as done (`COMPLETED`).
+5. The customer can leave a review.
+
+## Tech stack
+
+- [Next.js](https://nextjs.org/) (App Router, Server Components, Server Actions)
+- TypeScript
+- Tailwind CSS with shadcn/ui components
+- lucide-react icons
+- jsonwebtoken for reading and verifying tokens
+- imgbb for profile photo hosting
+- Backend: Express, Prisma and Stripe (see the backend repository)
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 20 or later
+- The backend running locally, or the hosted API above
+
+### Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/FahimFaysalNirjhar/FixItNow-Frontend.git
+cd FixItNow-Frontend
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file in the project root:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Backend base URL (no trailing slash)
+BACKEND_API_URL=https://fix-it-now-assignment-4.vercel.app
 
-## Learn More
+# imgbb API key, used for profile photo uploads
+IMAGE_HOST_KEY=your_imgbb_key
 
-To learn more about Next.js, take a look at the following resources:
+# Must match the secrets used by the backend
+JWT_ACCESS_SECRET=your_access_secret
+JWT_REFRESH_SECRET=your_refresh_secret
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Run
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev      # development server at http://localhost:3000
+npm run build    # production build
+npm run start    # serve the production build
+```
 
-## Deploy on Vercel
+## Authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Login stores `accessToken` (1 day) and `refreshToken` (7 days) as httpOnly cookies.
+- When the access token expires, the refresh token is used to get a new one automatically.
+- After login, users are redirected by role: `/admin-dashboard`, `/technician-dashboard` or `/dashboard`.
+- All backend calls are made on the server, so tokens never reach browser JavaScript.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project structure
+
+```
+app/
+  (publicGroup)/       Home, services, technicians, about, contact, auth pages
+  (dashboardGroup)/    Customer, technician and admin dashboards
+  about/ contact/      Static pages
+service/               authedRequest, token and session helpers
+lib/                   Shared helpers (image upload)
+utils/                 JWT utilities
+```
+
+## Documentation
+
+See [API_INTEGRATION.md](./API_INTEGRATION.md) for the mapping between frontend functions and backend endpoints.
+
+## Author
+
+**Fahim Faysal Nirjhar**
+
+- GitHub: [FahimFaysalNirjhar](https://github.com/FahimFaysalNirjhar)
+- Email: fahimfaysal1995@gmail.com

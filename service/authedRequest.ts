@@ -60,25 +60,3 @@ export async function authedRequest(
     };
   }
 }
-
-export const createReviewAction = async (
-  bookingId: string,
-  rating: number,
-  comment: string,
-): Promise<CustomerActionResult> => {
-  if (!bookingId || !Number.isInteger(rating) || rating < 1 || rating > 5) {
-    return { success: false, message: "Please select a rating from 1 to 5." };
-  }
-
-  const result = await authedRequest(
-    "POST",
-    `${CUSTOMER_API}/bookings/${encodeURIComponent(bookingId)}/review`,
-    { rating, comment: comment.trim() },
-  );
-
-  if (!result.success) return { success: false, message: result.message };
-
-  revalidatePath("/dashboard/bookings");
-  revalidatePath("/dashboard/reviews");
-  return { success: true, message: "Thanks for your review!" };
-};
