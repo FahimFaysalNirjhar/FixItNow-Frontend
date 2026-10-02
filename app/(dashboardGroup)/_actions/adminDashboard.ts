@@ -31,6 +31,7 @@ export type AdminCategory = {
 export type AdminBooking = {
   id: string;
   status: string;
+  createdAt?: string;
   scheduledStart: string;
   scheduledEnd?: string | null;
   totalAmount: number;
