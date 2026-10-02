@@ -96,12 +96,12 @@ const LoginForm = () => {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <Link
+              {/* <Link
                 href="/forgot-password"
                 className="text-xs font-medium text-[#b8892f] hover:underline dark:text-[#d4b06a]"
               >
                 Forgot password?
-              </Link>
+              </Link> */}
             </div>
             <Input
               id="password"

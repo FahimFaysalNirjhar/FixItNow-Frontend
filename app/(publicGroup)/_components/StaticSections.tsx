@@ -60,7 +60,7 @@ export function HowItWorks() {
           {STEPS.map((step, index) => (
             <li key={step.title}>
               <Reveal delay={index * 0.15} className="relative text-center">
-                <span className="relative mx-auto flex size-[72px] items-center justify-center rounded-full border border-[#c9a45c]/60 bg-white text-[#2c4a6e] shadow-lg shadow-[#b8892f]/15">
+                <span className="relative mx-auto flex size-18 items-center justify-center rounded-full border border-[#c9a45c]/60 bg-white text-[#2c4a6e] shadow-lg shadow-[#b8892f]/15">
                   <step.icon className="size-7" aria-hidden />
                   <span className="absolute -right-1 -top-1 flex size-7 items-center justify-center rounded-full bg-[#b8892f] font-serif text-sm font-semibold text-white">
                     {index + 1}
