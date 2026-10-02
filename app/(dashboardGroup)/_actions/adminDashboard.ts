@@ -21,6 +21,13 @@ export type AdminUser = {
   } | null;
 };
 
+export type AdminCategory = {
+  id: string;
+  name: string;
+  createdAt?: string;
+  _count?: { services?: number };
+};
+
 export const getAllUsers = async (): Promise<
   | { success: true; data: AdminUser[] }
   | { success: false; statusCode: number; message: string }
@@ -35,5 +42,22 @@ export const getAllUsers = async (): Promise<
   return {
     success: true,
     data: Array.isArray(data) ? data : (data?.users ?? data?.data ?? []),
+  };
+};
+
+export const getAdminCategories = async (): Promise<
+  | { success: true; data: AdminCategory[] }
+  | { success: false; statusCode: number; message: string }
+> => {
+  const result = await authedRequest("GET", `${ADMIN_API}/categories`);
+  if (!result.success) return result;
+
+  const data = result.data as
+    | AdminCategory[]
+    | { categories?: AdminCategory[]; data?: AdminCategory[] };
+
+  return {
+    success: true,
+    data: Array.isArray(data) ? data : (data?.categories ?? data?.data ?? []),
   };
 };

@@ -77,7 +77,7 @@ export const navByRole: Record<Role, NavItem[]> = {
       href: "/admin-dashboard/technicians",
       icon: BadgeCheck,
     },
-    { label: "Services", href: "/admin-dashboard/services", icon: Wrench },
+
     {
       label: "Bookings",
       href: "/admin-dashboard/bookings",
